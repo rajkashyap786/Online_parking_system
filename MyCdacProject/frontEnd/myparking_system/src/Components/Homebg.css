@@ -1,0 +1,34 @@
+.backColor {
+    background-color: rgba(226, 241, 155, 0.7) !important;
+}
+
+.loginbg {
+    background-color: rgba(214, 228, 230, 0.986) !important;
+}
+
+.regbg {
+    color: rgba(92, 145, 145, 0.986) !important;
+    /* background-color: rgba(214, 228, 230, 0.986) !important; */
+}
+
+.search-container button:hover {
+    background: #ccc;
+}
+
+.search {
+    padding-left: 20px;
+    margin-top: 30px;
+    margin-left: 12%;
+    height: "50px";
+    width: 70%;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    background-color: white;
+}
+
+.search-button {
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    height: "50px";
+    width: "3%";
+}

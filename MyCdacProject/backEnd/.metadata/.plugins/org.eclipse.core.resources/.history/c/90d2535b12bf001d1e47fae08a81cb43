@@ -1,0 +1,25 @@
+package com.parkingSystem.OnlineParkingSystem.Repository;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+//import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import com.parkingSystem.OnlineParkingSystem.Model.BookingSlot;
+import com.parkingSystem.OnlineParkingSystem.Model.User;
+
+public interface BookingSlotRepo extends JpaRepository<BookingSlot,Integer> {
+
+	BookingSlot findBybookId(int bookingId);
+	
+//    List<BookingSlot> findByParkId(int parkingPlaceid);
+	@Query("SELECT COUNT(*) FROM BookingSlot u WHERE u.parkingPlace= : parkPlaceid")
+//	@Query("SELECT COUNT(*) FROM BookingSlot u WHERE u.parking_placeid=:parkPlaceid")
+   public long countByParkingPlace(@Param("parkPlaceid") int parkPlaceid);
+   
+//   public long countByParkingPlace(int parkPlaceid);
+
+	List<BookingSlot> findByUser(User usr);
+}

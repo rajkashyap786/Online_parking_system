@@ -1,0 +1,23 @@
+package com.parkingSystem.OnlineParkingSystem.Entitydto;
+
+import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+public class LocationDto implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private int locationId;
+	private String locationName;
+	private String description;
+	private String imgeName;
+}

@@ -1,0 +1,114 @@
+package com.parkingSystem.OnlineParkingSystem.ServiceImpl;
+
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.parkingSystem.OnlineParkingSystem.Entitydto.ParkingPlaceDto;
+import com.parkingSystem.OnlineParkingSystem.Model.Location;
+import com.parkingSystem.OnlineParkingSystem.Model.ParkingPlace;
+import com.parkingSystem.OnlineParkingSystem.Model.User;
+import com.parkingSystem.OnlineParkingSystem.Repository.BookingSlotRepo;
+import com.parkingSystem.OnlineParkingSystem.Repository.LocationRepo;
+import com.parkingSystem.OnlineParkingSystem.Repository.ParkingPlaceRepo;
+import com.parkingSystem.OnlineParkingSystem.Repository.UserRepo;
+import com.parkingSystem.OnlineParkingSystem.Service.ParkingPlaceService;
+import com.parkingSystem.OnlineParkingSystem.exception.ResourceNotFoundException;
+
+@Service
+public class ParkingPlaceServiceImpl implements ParkingPlaceService {
+
+	@Autowired
+	ParkingPlaceRepo parkingPlaceRepo;
+	
+	@Autowired
+	LocationRepo locationRepo;
+	
+	@Autowired
+	private BookingSlotRepo bookSlotRepo;
+	
+	@Autowired
+	private UserRepo userRepo;
+	
+	@Autowired
+	private ModelMapper modelMapper;
+	
+	@Override
+	public ParkingPlaceDto createParkPlace(ParkingPlaceDto parkingPlaceDto,int locId,int usrid) {
+		Location loc=this.locationRepo.findById(locId).orElseThrow(()-> new ResourceNotFoundException("Location","locId",locId));
+		User Usrid=this.userRepo.findById(usrid).orElseThrow(()-> new ResourceNotFoundException("User","userid",usrid));
+		ParkingPlace parkingPlace=this.modelMapper.map(parkingPlaceDto,ParkingPlace.class);
+		
+		parkingPlace.setLocation(loc);
+		parkingPlace.setUser(Usrid);
+		ParkingPlace parkinglocDto=this.parkingPlaceRepo.save(parkingPlace);
+		
+		return this.modelMapper.map(parkinglocDto, ParkingPlaceDto.class);
+	}
+	
+	@Override
+	public int calculate(int parkPlaceid) {
+		ParkingPlace park=this.parkingPlaceRepo.findById(parkPlaceid).orElseThrow(()-> new ResourceNotFoundException("ParkingPlace","parkPlaceid",parkPlaceid));
+	    int slotBookedCount=this.bookSlotRepo.countByParkingPlace(parkPlaceid);
+		int remainingSlot=park.getTotalSlot()-slotBookedCount;
+		return remainingSlot;
+	}
+
+	@Override
+	public ParkingPlaceDto UpdateParkingDetails(ParkingPlaceDto parkingPlaceDto, int parkingPlaceID) {
+		
+		ParkingPlace parkPlace=this.parkingPlaceRepo.findById(parkingPlaceID).orElseThrow(()-> new ResourceNotFoundException("ParkingPlace","parkingPlaceId",parkingPlaceID));
+		
+		parkPlace.setParkingPlaceName(parkingPlaceDto.getParkingPlaceName());
+		parkPlace.setTotalSlot(parkingPlaceDto.getTotalSlot());
+		return this.modelMapper.map(parkPlace, ParkingPlaceDto.class);
+	}
+	
+	@Override
+	public void deleteParkingPlaceDetails(int parkingPlaceID) {
+		ParkingPlace parkPlace=this.parkingPlaceRepo.findById(parkingPlaceID).orElseThrow(()-> new ResourceNotFoundException("ParkingPlace","parkingPlaceId",parkingPlaceID));
+		this.parkingPlaceRepo.delete(parkPlace);
+	}
+
+	@Override
+	public List<ParkingPlaceDto> getAllParkPlace() {
+		List<ParkingPlace> allPlaces=this.parkingPlaceRepo.findAll();
+		List<ParkingPlaceDto> allPlaceDto=allPlaces.stream().map((place)->this.modelMapper.map(place, ParkingPlaceDto.class)).collect(Collectors.toList());
+		return allPlaceDto;
+	}
+	
+	@Override
+	public ParkingPlaceDto getSingleParkingDetails(int parkingPlaceID) {
+		
+		ParkingPlace parkPlace=this.parkingPlaceRepo.findById(parkingPlaceID).orElseThrow(()-> new ResourceNotFoundException("ParkingPlace","parkingPlaceId",parkingPlaceID));
+		parkPlace.setTotalAvailableSlot(this.calculate(parkingPlaceID));
+		return this.modelMapper.map(parkPlace, ParkingPlaceDto.class);
+	}
+
+	@Override
+	public List<ParkingPlaceDto> searchParkPlace(String keyword) {
+	 List<ParkingPlace> placeName=this.parkingPlaceRepo.findByparkingPlaceNameContaining(keyword);
+	     List<ParkingPlaceDto> parkPlaceDto=  placeName.stream().map((place)->this.modelMapper.map(place, ParkingPlaceDto.class)).collect(Collectors.toList());
+		return parkPlaceDto;
+	}
+
+	@Override
+	public List<ParkingPlaceDto> getParkingByLocation(int locationId) {
+		Location loc=this.locationRepo.findById(locationId).orElseThrow(()-> new ResourceNotFoundException("Location","locationId",locationId));
+		List<ParkingPlace> pp=this.parkingPlaceRepo.findByLocation(loc);
+		List<ParkingPlaceDto>  ppDto= pp.stream().map((park)->this.modelMapper.map(park, ParkingPlaceDto.class)).collect(Collectors.toList());
+		return ppDto;
+	}
+
+//	@Override
+//	public List<ParkingPlace> getParkingByUser(int userId) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+
+	
+}

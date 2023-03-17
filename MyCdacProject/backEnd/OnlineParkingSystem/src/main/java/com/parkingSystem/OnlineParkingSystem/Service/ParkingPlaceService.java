@@ -1,0 +1,20 @@
+package com.parkingSystem.OnlineParkingSystem.Service;
+
+import java.util.List;
+
+import com.parkingSystem.OnlineParkingSystem.Entitydto.ParkingPlaceDto;
+
+public interface ParkingPlaceService {
+
+   ParkingPlaceDto createParkPlace(ParkingPlaceDto parkingPlaceDto,int locId,int usrid);
+  
+   public int calculate(int parkPlaceid);
+   ParkingPlaceDto UpdateParkingDetails(ParkingPlaceDto parkingPlaceDto,int parkingPlaceID);
+   void deleteParkingPlaceDetails(int parkingPlaceID);
+   List<ParkingPlaceDto> getAllParkPlace();
+   ParkingPlaceDto getSingleParkingDetails(int parkingPlaceID);
+   
+   List<ParkingPlaceDto> getParkingByLocation(int locationId);
+//   List<ParkingPlaceDto> getParkingByUser(int userId);
+  List<ParkingPlaceDto> searchParkPlace(String keyword);
+}

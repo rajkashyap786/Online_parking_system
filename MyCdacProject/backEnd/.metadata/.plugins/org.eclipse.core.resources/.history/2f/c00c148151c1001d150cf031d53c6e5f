@@ -1,0 +1,25 @@
+package com.parkingSystem.OnlineParkingSystem.Entitydto;
+
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+public class LocationDto {
+
+	private int locationId;
+	private String locationName;
+	private String description;
+	private String imgeName;
+	
+	 @JsonCreator
+	    public LocationDto(String description, String locationName) {
+	        this.description = description;
+	        this.locationName = locationName;
+	    }
+}
